@@ -155,9 +155,11 @@ void QMinimalEglScreen::createAndSetPlatformContext()
 
     m_surface = eglCreateWindowSurface(m_dpy, config, eglWindow, NULL);
     if (Q_UNLIKELY(m_surface == EGL_NO_SURFACE)) {
-        qWarning("Could not create the egl surface: error = 0x%x\n", eglGetError());
-        eglTerminate(m_dpy);
-        qFatal("EGL error");
+        if (qEnvironmentVariableIsEmpty("QT_QPA_HEADLESS")) {
+            qWarning("Could not create the egl surface: error = 0x%x\n", eglGetError());
+            eglTerminate(m_dpy);
+            qFatal("EGL error");
+        }
     }
     //    qWarning("Created surface %dx%d\n", w, h);
 
